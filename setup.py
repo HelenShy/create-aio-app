@@ -1,11 +1,9 @@
 import os
 import pathlib
-import re
 import sys
 
 from setuptools import find_packages, setup
 
-REGEXP = re.compile(r"^__version__\W*=\W*'([\d.abrc]+)'")
 parent = pathlib.Path(__file__).parent
 
 
@@ -30,22 +28,10 @@ def package_files(directory):
     return paths
 
 
-def read_version():
-
-    init_py = os.path.join(
-        os.path.dirname(__file__),
-        'create_aio_app',
-        '__init__.py'
-    )
-
-    with open(init_py) as f:
-        for line in f:
-            match = REGEXP.match(line)
-            if match is not None:
-                return match.group(1)
-        else:
-            msg = f'Cannot find version in ${init_py}'
-            raise RuntimeError(msg)
+setup_requires = [
+    'setuptools_scm',
+    'setuptools_scm_git_archive',
+]
 
 
 install_requires = [
@@ -76,7 +62,6 @@ classifiers = [
 
 setup(
     name="create-aio-app",
-    version=read_version(),
     description=(
         "The tool that helps quickly create a basis for "
         "the microservice on aiohttp and prepare the development "
@@ -90,6 +75,8 @@ setup(
     include_package_data=True,
     author="Mykhailo Havelia",
     author_email="misha.gavela@gmail.com",
+    use_scm_version=True,
+    setup_requires=setup_requires,
     install_requires=install_requires,
     license="MIT",
     url="https://github.com/aio-libs/create-aio-app",
